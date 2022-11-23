@@ -54,12 +54,16 @@ int is_empty(Stack *s) {
 }
 
 void main() {
-  char *string = "S*12.234-234523*S";
+  char *string = "sin12.234-234523*sin3654-cos345/7458";
   char *string_for_chityvatel = calloc(strlen(string), sizeof(char));
-  printf("string = %s\n", string);
+  char *string_for_unar = calloc(strlen(string), sizeof(char));
+
+  // printf("string = %s\n", string);
   Stack *my_stack_for_number = create_stack();
   Stack *my_stack_for_symbol = create_stack();
-  chityvatel_stroki(my_stack_for_number, my_stack_for_symbol, string,
+  reduction_of_variables(string, string_for_chityvatel);
+  check_unar_symbol(string_for_chityvatel, string_for_unar);
+  chityvatel_stroki(my_stack_for_number, my_stack_for_symbol, string_for_unar,
                     string_for_chityvatel);
 }
 
@@ -112,46 +116,46 @@ void reduction_of_variables(char *string, char *string_final) {
   }
 }
 
-// проверяем на приоритетность
-int check_priority(char b) {
-  int priority = 0;
-  switch (b) {
-    case '(':
-    case ')':
-      priority = 1;
-      break;
-    case '+':
-    case '-':
-      priority = 2;
-      break;
-    case '%':
-    case '*':
-    case '/':
-      priority = 4;
-      break;
-    case 'S':
-    case 'C':
-    case 'T':
-    case 'I':
-    case 'B':
-    case 'O':
-    case 'L':
-    case 'G':
-    case 'Q':
-      priority = 3;
-      break;
-    case '^':
-      priority = 5;
-      break;
-    case '~':
-      priority = 6;
-      break;
-    default:
-      printf("OSHIPKA");
-      break;
-  }
-  return priority;
-}
+// // проверяем на приоритетность
+// int check_priority(char b) {
+//   int priority = 0;
+//   switch (b) {
+//     case '(':
+//     case ')':
+//       priority = 1;
+//       break;
+//     case '+':
+//     case '-':
+//       priority = 2;
+//       break;
+//     case '%':
+//     case '*':
+//     case '/':
+//       priority = 4;
+//       break;
+//     case 'S':
+//     case 'C':
+//     case 'T':
+//     case 'I':
+//     case 'B':
+//     case 'O':
+//     case 'L':
+//     case 'G':
+//     case 'Q':
+//       priority = 3;
+//       break;
+//     case '^':
+//       priority = 5;
+//       break;
+//     case '~':
+//       priority = 6;
+//       break;
+//     default:
+//       // printf("OSHIPKA");
+//       break;
+//   }
+//   return priority;
+// }
 
 void check_unar_symbol(char *string, char *string_final) {
   if (string[0] == '-') {
@@ -168,60 +172,41 @@ void check_unar_symbol(char *string, char *string_final) {
   }
 }
 
-
-
 int chityvatel_stroki(Stack *my_stack_for_number, Stack *my_stack_for_symbol,
                       char *string, char *string_for_chityvatel) {
   Data elem;
 
-  // t = string;
   double template;
-  // char temp = 0;
-  char *t = calloc(strlen(t), sizeof(char));
+  char *t = calloc(strlen(string), sizeof(char));
   for (int i = 0, j = 0; string[i] != '\0'; i++) {
-    int j = 0;
+    int qwerty = 0;
     while (isdigit(string[i]) == 1 || string[i] == '.') {
       t[j] = string[i];
-      j++;
       i++;
+      j++;
+      qwerty = 1;
     }
     string_for_chityvatel = t;
-    double template = strtold(t, &string_for_chityvatel);
-    // while (isdigit(string[i]) == 1 || string[i] == '.') {
-    //   if (isdigit(string[i + 1]) == 1 || string[i + 1] == '.') {
-    //     t[j] = string[i];
-    //     printf("\nt = %c\n", t[j]);
-    //     j++;
-    //   }
-    //   if (isdigit(string[i + 1]) == 0 || string[i + 1] != '.') {
-    //     t[j] = string[i];
-    //     string_for_chityvatel = t;
-    // printf("\nstring_for_chityvatel_final = %s\n", t);
-    // printf("%lf\n", strtod(string, &string_for_chityvatel));
-    // for (int i = 0; string[i] != '\0'; i++) {
-    //   printf("string_for_chityvatel = %c\n", string_for_chityvatel[i]);
-    //   printf("--------\n");
-    // }
-    if (isdigit(string[i]) == 0 && string[i] != '.') {
-      // temp = string[i];
-      elem.symbol = string[i];
-      // push_elem(my_stack_for_symbol, elem);
-      // printf("\nelem.symbol = %c\n", elem.symbol);
-    }
-    // printf("\n %lf\n", template);
+
+    double template = strtod(t, &string_for_chityvatel);
+
     elem.number = template;
-    push_elem(my_stack_for_number, elem);
+    if (qwerty == 1) {
+      push_elem(my_stack_for_number, elem);
+    }
+    for (size_t ii = 0; ii < strlen(string); ++ii) t[ii] = '\0';
+    j = 0;
+    if ((isdigit(string[i]) == 0 || string[i] != '.') && string[i] != '\0') {
+      elem.symbol = string[i];
+      push_elem(my_stack_for_symbol, elem);
+    }
   }
-  while (t) {
-    template = strtod(t, &string_for_chityvatel);
+  printf("\n number = %lf\n",
+         my_stack_for_number->top->next->next->next->data.number);
 
-    while (isdigit(*t) == 0 && *t) t++;
-
-    break;
-  }
-
-  free(t);
+  printf("\n symbol = %c\n", my_stack_for_symbol->top->data.symbol);
 }
+
 // printf("Whole t: %s\n", t);
 // while (is_empty(my_stack)) {
 // printf("\n number   -   %.10lf\n", my_stack_for_number->top->data.number);
