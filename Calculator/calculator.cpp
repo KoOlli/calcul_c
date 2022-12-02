@@ -1,15 +1,13 @@
-#include <calculator.h>
+#include "calculator.h"
+#include "mainwindow.cpp"
 
 #include <QGridLayout>
-#include <QToolButton>
+#include <QPushButton>
 #include <QTextLine>
 #include <QChar>
 
+#include <QValidator>
 #include <QDebug>
-
-
-
-
 
 
 Calculator::Calculator()
@@ -19,166 +17,122 @@ Calculator::Calculator()
     m_x =                     new QLabel;
     QGridLayout* mainLayout = new QGridLayout;
 
-
     m_display_up->setText("0");
 
 
     m_display_up->setReadOnly(true);
-    m_x->setText("    x = ");
+    m_x->setText("  x =");
 
     m_display_up->setAlignment(Qt::AlignRight);
     m_display_x-> setAlignment(Qt::AlignRight);
 
 
-    m_display_up->setMaxLength(30);
-    m_display_x-> setMaxLength(30);
-
-
-
-
-
+//    m_display_up->setMaxLength(30);
+//    m_display_x-> setMaxLength(30);
 
 
     for (int i = 0; i < 10; ++i) {
-        m_digitButtons[i] = createButton(QString::number(i), SLOT(digitClicked()));
+        m_digitButtons[i] = CreateButton(QString::number(i), SLOT(DigitClicked()));
 }
 
-    MyButton* var_point =  createButton(".", SLOT(pointClicked()));
+    MyButton* var_point =  CreateButton(".", SLOT(CheckPoint()));
 
-    MyButton* var_cencel_symbol = createButton("CE", SLOT(clear()));
-    MyButton* var_cencel_string = createButton("C", SLOT(clearAll()));
-
-    MyButton* var_div =    createButton("/", SLOT(doubleOperatorClicked()));
-    MyButton* var_mult =   createButton("*", SLOT(doubleOperatorClicked()));
-    MyButton* var_minus =  createButton("-", SLOT(doubleOperatorClicked()));
-    MyButton* var_plus =   createButton("+", SLOT(doubleOperatorClicked()));
+    MyButton* var_cencel_symbol = CreateButton("CE", SLOT(Clear()));
+    MyButton* var_cencel_string = CreateButton("C", SLOT(ClearAll()));
 
 
-    MyButton* var_sqrt =          createButton("sqrt", SLOT(unaryOperatorClicked()));
-    MyButton* var_pi =            createButton("π", SLOT(unaryOperatorClicked()));
-    MyButton* var_mod =           createButton("%", SLOT(unaryOperatorClicked()));
-    MyButton* var_degree =        createButton("^", SLOT(unaryOperatorClicked()));
-    MyButton* var_open_bracket =  createButton("(", SLOT(unaryOperatorClicked()));
-    MyButton* var_close_bracket = createButton(") ", SLOT(unaryOperatorClicked()));
-    MyButton* var_00 =            createButton("00", SLOT(unaryOperatorClicked()));
+    MyButton* var_minus =  CreateButton("-", SLOT(DoubleOperatorClicked()));
+    MyButton* var_plus =   CreateButton("+", SLOT(DoubleOperatorClicked()));
+
+    MyButton* var_div =    CreateButton("/", SLOT(AuxiliaryOperatorClicked()));
+    MyButton* var_mult =   CreateButton("*", SLOT(AuxiliaryOperatorClicked()));
+    MyButton* var_pi =     CreateButton("π", SLOT(AuxiliaryOperatorClicked()));
+    MyButton* var_mod =    CreateButton("%", SLOT(AuxiliaryOperatorClicked()));
+    MyButton* var_degree = CreateButton("^", SLOT(AuxiliaryOperatorClicked()));
+
+    MyButton* var_open_bracket =  CreateButton("(", SLOT(UnaryOperatorClicked()));
+    MyButton* var_close_bracket = CreateButton(")", SLOT(UnaryOperatorClicked()));
+    MyButton* var_00 =            CreateButton("00", SLOT(UnaryOperatorClicked()));
 
 
-    MyButton* var_deposit = createButton("dep", SLOT(addFunctionsClicked()));
-    MyButton* var_cred =    createButton("cred", SLOT(addFunctionsClicked()));
-    MyButton* var_graf =    createButton("graf", SLOT(addFunctionsClicked()));
-
-    MyButton* var_ln =     createButton("ln", SLOT(trigonometryClicked()));
-    MyButton* var_log =    createButton("log", SLOT(trigonometryClicked()));
-    MyButton* var_asin =   createButton("asin", SLOT(trigonometryClicked()));
-    MyButton* var_sin =    createButton("sin", SLOT(trigonometryClicked()));
-    MyButton* var_acos =   createButton("acos", SLOT(trigonometryClicked()));
-    MyButton* var_cos =    createButton("cos", SLOT(trigonometryClicked()));
-    MyButton* var_atan =   createButton("atan", SLOT(trigonometryClicked()));
-    MyButton* var_tan =    createButton("tan", SLOT(trigonometryClicked()));
-
-    MyButton* var_result = createButton("=", SLOT(equalClicked()));
+    MyButton* var_deposit = CreateButton("dep", SLOT(AddFunctionsClicked()));
+    MyButton* var_cred =    CreateButton("cred", SLOT(AddFunctionsClicked()));
+    MyButton* var_graf =    CreateButton("graf", SLOT(AddFunctionsClicked()));
 
 
+    MyButton* var_sqrt =   CreateButton("sqrt", SLOT(TrigonometryClicked()));
+    MyButton* var_ln =     CreateButton("ln", SLOT(TrigonometryClicked()));
+    MyButton* var_log =    CreateButton("log", SLOT(TrigonometryClicked()));
+    MyButton* var_asin =   CreateButton("asin", SLOT(TrigonometryClicked()));
+    MyButton* var_sin =    CreateButton("sin", SLOT(TrigonometryClicked()));
+    MyButton* var_acos =   CreateButton("acos", SLOT(TrigonometryClicked()));
+    MyButton* var_cos =    CreateButton("cos", SLOT(TrigonometryClicked()));
+    MyButton* var_atan =   CreateButton("atan", SLOT(TrigonometryClicked()));
+    MyButton* var_tan =    CreateButton("tan", SLOT(TrigonometryClicked()));
+
+    MyButton* var_result = CreateButton("=", SLOT(EqualClicked()));
+
+
+    mainLayout->addWidget(m_display_up,      0, 0, 2, 9);
+
+    mainLayout->addWidget(m_x,               4, 0);
+    mainLayout->addWidget(m_display_x,       4, 1, 1, 2);
+    mainLayout->addWidget(var_open_bracket,  4, 4);
+    mainLayout->addWidget(var_close_bracket, 4, 5);
+    mainLayout->addWidget(var_cencel_symbol, 4, 6);
+    mainLayout->addWidget(var_cencel_string, 4, 7);
+    mainLayout->addWidget(var_deposit,       4, 8);
+
+    mainLayout->addWidget(var_ln,            5, 0);
+    mainLayout->addWidget(var_log,           5, 1);
+    mainLayout->addWidget(var_degree,        5, 2);
+    mainLayout->addWidget(m_digitButtons[7], 5, 4);
+    mainLayout->addWidget(m_digitButtons[8], 5, 5);
+    mainLayout->addWidget(m_digitButtons[9], 5, 6);
+    mainLayout->addWidget(var_div,           5, 7);
+    mainLayout->addWidget(var_cred,          5, 8);
+
+    mainLayout->addWidget(var_asin,          6, 0);
+    mainLayout->addWidget(var_sin,           6, 1);
+    mainLayout->addWidget(var_mod,           6, 2);
+    mainLayout->addWidget(m_digitButtons[4], 6, 4);
+    mainLayout->addWidget(m_digitButtons[5], 6, 5);
+    mainLayout->addWidget(m_digitButtons[6], 6, 6);
+    mainLayout->addWidget(var_mult,          6, 7);
+    mainLayout->addWidget(var_graf,          6, 8);
+
+    mainLayout->addWidget(var_acos,          7, 0);
+    mainLayout->addWidget(var_cos,           7, 1);
+    mainLayout->addWidget(var_pi,            7, 2);
+    mainLayout->addWidget(m_digitButtons[1], 7, 4);
+    mainLayout->addWidget(m_digitButtons[2], 7, 5);
+    mainLayout->addWidget(m_digitButtons[3], 7, 6);
+    mainLayout->addWidget(var_minus,         7, 7);
+    mainLayout->addWidget(var_result,        7, 8, 2, 1);
+
+    mainLayout->addWidget(var_atan,          8, 0);
+    mainLayout->addWidget(var_tan,           8, 1);
+    mainLayout->addWidget(var_sqrt,          8, 2);
+    mainLayout->addWidget(var_00,            8, 4);
+    mainLayout->addWidget(m_digitButtons[0], 8, 5);
+    mainLayout->addWidget(var_point,         8, 6);
+    mainLayout->addWidget(var_plus,          8, 7);
+
+    setStyleSheet("MyButton, QLabel { font-family: Chalkduster; font-size: 20px; height: 40px; width: 30px; color: #FA93CD }"
+                  "QLineEdit { font-family: Chalkduster; color: #FA79CD; background-color: #FFCBD3 }"
+                  "Calculator { background-color: #FFDAD3 }"
+                  "AddFunctionsClicked { font-family: Chalkduster; font-size: 20px; height: 40px; width: 30px; color: #C0C7FA }");
+
+
+    m_display_x->setFixedSize(150, 30);
 
     QFont font = m_display_up->font();
-    QFont display = m_display_x->font();
-    font.setPointSize(font.pointSize() + 8);
-    display.setPointSize(display.pointSize() + 24);
-
-    m_display_up->setFont(display);
-
-    m_x-> setFont(font);
-    m_display_x-> setFont(font);
-    var_open_bracket-> setFont(font);
-    var_close_bracket-> setFont(font);
-    var_cencel_symbol-> setFont(font);
-    var_cencel_string-> setFont(font);
-    var_deposit-> setFont(font);
-
-    var_ln-> setFont(font);
-    var_log-> setFont(font);
-    var_degree-> setFont(font);
-    m_digitButtons[7]-> setFont(font);
-    m_digitButtons[8]-> setFont(font);
-    m_digitButtons[9]-> setFont(font);
-    var_div-> setFont(font);
-    var_cred-> setFont(font);
-
-    var_asin-> setFont(font);
-    var_sin-> setFont(font);
-    var_mod-> setFont(font);
-    m_digitButtons[4]-> setFont(font);
-    m_digitButtons[5]-> setFont(font);
-    m_digitButtons[6]-> setFont(font);
-    var_mult-> setFont(font);
-    var_graf-> setFont(font);
-
-    var_acos-> setFont(font);
-    var_cos-> setFont(font);
-    var_pi-> setFont(font);
-    m_digitButtons[3]-> setFont(font);
-    m_digitButtons[2]-> setFont(font);
-    m_digitButtons[1]-> setFont(font);
-    var_minus-> setFont(font);
-    var_result-> setFont(font);
-
-    var_atan-> setFont(font);
-    var_tan-> setFont(font);
-    var_sqrt-> setFont(font);
-    var_00-> setFont(font);
-    m_digitButtons[0]-> setFont(font);
-    var_point-> setFont(font);
-    var_plus-> setFont(font);
-
-
-
-    mainLayout->addWidget(m_display_up,      0, 0, 2, 16);
-
-    mainLayout->addWidget(m_x,               4, 0, 2, 2);
-    mainLayout->addWidget(m_display_x,       4, 2, 2, 4);
-    mainLayout->addWidget(var_open_bracket,  4, 6, 2, 2);
-    mainLayout->addWidget(var_close_bracket, 4, 8, 2, 2);
-    mainLayout->addWidget(var_cencel_symbol, 4, 10, 2, 2);
-    mainLayout->addWidget(var_cencel_string, 4, 12, 2, 2);
-    mainLayout->addWidget(var_deposit,       4, 14, 2, 2);
-
-    mainLayout->addWidget(var_ln,            6, 0, 2, 2);
-    mainLayout->addWidget(var_log,           6, 2, 2, 2);
-    mainLayout->addWidget(var_degree,        6, 4, 2, 2);
-    mainLayout->addWidget(m_digitButtons[7], 6, 6, 2, 2);
-    mainLayout->addWidget(m_digitButtons[8], 6, 8, 2, 2);
-    mainLayout->addWidget(m_digitButtons[9], 6, 10, 2, 2);
-    mainLayout->addWidget(var_div,           6, 12, 2, 2);
-    mainLayout->addWidget(var_cred,          6, 14, 2, 2);
-
-    mainLayout->addWidget(var_asin,          8, 0, 2, 2);
-    mainLayout->addWidget(var_sin,           8, 2, 2, 2);
-    mainLayout->addWidget(var_mod,           8, 4, 2, 2);
-    mainLayout->addWidget(m_digitButtons[4], 8, 6, 2, 2);
-    mainLayout->addWidget(m_digitButtons[5], 8, 8, 2, 2);
-    mainLayout->addWidget(m_digitButtons[6], 8, 10, 2, 2);
-    mainLayout->addWidget(var_mult,          8, 12, 2, 2);
-    mainLayout->addWidget(var_graf,          8, 14, 2, 2);
-
-    mainLayout->addWidget(var_acos,          10, 0, 2, 2);
-    mainLayout->addWidget(var_cos,           10, 2, 2, 2);
-    mainLayout->addWidget(var_pi,            10, 4, 2, 2);
-    mainLayout->addWidget(m_digitButtons[1], 10, 6, 2, 2);
-    mainLayout->addWidget(m_digitButtons[2], 10, 8, 2, 2);
-    mainLayout->addWidget(m_digitButtons[3], 10, 10, 2, 2);
-    mainLayout->addWidget(var_minus,         10, 12, 2, 2);
-    mainLayout->addWidget(var_result,        10, 14, 4, 2);
-
-    mainLayout->addWidget(var_atan,          12, 0, 2, 2);
-    mainLayout->addWidget(var_tan,           12, 2, 2, 2);
-    mainLayout->addWidget(var_sqrt,          12, 4, 2, 2);
-    mainLayout->addWidget(var_00,            12, 6, 2, 2);
-    mainLayout->addWidget(m_digitButtons[0], 12, 8, 2, 2);
-    mainLayout->addWidget(var_point,         12, 10, 2, 2);
-    mainLayout->addWidget(var_plus,          12, 12, 2, 2);
-
-
-
+    font.setPointSize(font.pointSize() + 30);
+    m_display_up->setFont(font);
+    QFont siz = m_display_x->font();
+    siz.setPointSize(siz.pointSize() + 7);
+    m_display_x->setFont(siz);
+    m_x->setFont(siz);
 
     setLayout(mainLayout);
 
@@ -188,62 +142,185 @@ Calculator::Calculator()
 
 
 
-MyButton* Calculator::createButton(const QString& text, const char* member) {
-    MyButton* btn = new MyButton(text);
 
-    connect(btn, SIGNAL(clicked()), this, member);
-    return btn;
+MyButton* Calculator::CreateButton(const QString& text, const char* member) {
+    MyButton* temp = new MyButton(text);
+    buttons.push_back(temp);
+
+    connect(temp, SIGNAL(clicked()), this, member);
+
+    return temp;
 }
 
-void Calculator::digitClicked() {
-    MyButton*  btn = (MyButton*) sender();
-    QString digit = btn->text();
+void Calculator::DigitClicked() {
+    MyButton*  temp = (MyButton*) sender();
+    QString digit = temp->text();
+    QString last_elem = m_display_up->text().last(1);
+
     if (m_display_up->text() == "0") {
         m_display_up->setText(digit);
-    } else {
+    } else if (last_elem == "+" || last_elem == "-" || last_elem == "*" ||
+               last_elem == "/" || last_elem == "^" || last_elem == "%" ||
+               last_elem == "(" || isdigit(*last_elem.toStdString().data()) == 1 || last_elem == ".") {
         m_display_up->setText(m_display_up->text() + digit);
     }
+
     qDebug() << "digit pressed" << digit;
 
 //    if (m_display_up->text() == "0") {
-//        m_display_up->clear();
+//        m_display_up->Clear();
 //    }
 
 //    m_display_up->setText(m_display_up->text() + digit);
 }
 
-void Calculator::unaryOperatorClicked() {
+void Calculator::UnaryOperatorClicked() {
+    MyButton* temp = (MyButton*) sender();
+    QString unary = temp->text();
+    QString last_elem = m_display_up->text().last(1);
+
+    if (unary == "00") {
+        if ((last_elem == "." || isdigit(*last_elem.toStdString().data()) == 1) && m_display_up->text() != "0") {
+        m_display_up->setText(m_display_up->text() + unary);
+        }
+    } else if (unary == "(") {
+        if (m_display_up->text() == "0") {
+            m_display_up->setText(unary);
+        } else if (last_elem == "+" || last_elem == "-" || last_elem == "*" ||
+                   last_elem == "/" || last_elem == "%" || last_elem == "^" || last_elem == "(") {
+            m_display_up->setText(m_display_up->text() + unary);
+        }
+    } else if (unary == ")") {
+        int count_bracket_open = m_display_up->text().count('(');
+        int count_bracked_closed = m_display_up->text().count(')');
+        if (count_bracked_closed < count_bracket_open) {
+            if (last_elem == "π" || isdigit(*last_elem.toStdString().data()) == 1 || last_elem == ")") {
+                count = 0;
+                m_display_up->setText(m_display_up->text() + unary);
+            }
+        }
+    }
+
+
+    qDebug() << "In unary" << unary;
+}
+
+//void QWidget::setDisabled ( bool disable ) {
+
+//}
+
+void Calculator::AuxiliaryOperatorClicked() {
+    MyButton* temp = (MyButton*) sender();
+    QString auxiliary = temp->text();
+    QString last_elem = m_display_up->text().last(1);
+
+
+
+    if (auxiliary == "π") {
+        if (m_display_up->text() == "0") {
+            m_display_up->setText(auxiliary);
+        } else if (last_elem == "+" || last_elem == "-" || last_elem == "*" ||
+                   last_elem == "/" || last_elem == "^" || last_elem == "%" || last_elem == "(") {
+             m_display_up->setText(m_display_up->text() + auxiliary);
+        }
+    } else if (auxiliary == "%" || auxiliary == "^" || auxiliary == "/" || auxiliary == "*") {
+
+        if (m_display_up->text() != "0" && (last_elem == "π" ||last_elem == ")" ||
+                                            isdigit(*last_elem.toStdString().data()) == 1)) {
+            m_display_up->setText(m_display_up->text() + auxiliary);
+            count = 0;
+        }
+    }
+
+    qDebug() << "In auxiliary" << auxiliary;
 
 }
 
-void Calculator::doubleOperatorClicked() {
+
+void Calculator::DoubleOperatorClicked() {
+    count = 0;
+    MyButton* temp = (MyButton*) sender();
+    QString double_operation = temp->text();
+    QString last_elem = m_display_up->text().last(1);
+
+    if (m_display_up->text() == "0" && double_operation == "-") {
+        m_display_up->setText(double_operation);
+    } else if (double_operation == "-" || (double_operation == "+" && m_display_up->text() != "0")) {
+        if (isdigit(*last_elem.toStdString().data()) == 1 || last_elem == "π" || last_elem == "(" || last_elem == ")") {
+            m_display_up->setText(m_display_up->text() + double_operation);
+        }
+    }
 
 }
 
-void Calculator::equalClicked() {
+
+void Calculator::EqualClicked() {
 
 }
 
-void Calculator::pointClicked() {
+void Calculator::CheckPoint() {
+    MyButton* temp = (MyButton*) sender();
+    QString point = temp->text();
+
+    for (int i = 0; i < m_display_up->text().size(); ++i) {
+
+        if (isdigit(m_display_up->text().toStdString()[i]) == 1 &&
+                i == (m_display_up->text().size() - 1) && count == 0) {
+            PointClicked();
+        }
+    }
+    qDebug() << "In point" << point;
 
 }
 
-void Calculator::changeSingClicked() {
+int Calculator::PointClicked() {
+    MyButton* temp = (MyButton*) sender();
+    QString point = temp->text();
+
+    m_display_up->setText(m_display_up->text() + point);
+    count = 1;
+
+    qDebug() << "In point" << point;
+    return 0;
+}
+
+void Calculator::ChangeSingClicked() {
 
 }
 
-void Calculator::trigonometryClicked() {
+void Calculator::TrigonometryClicked() {
+    MyButton* temp = (MyButton*) sender();
+    QString trigono = temp->text();
+    QString last_elem = m_display_up->text().last(1);
+
+
+    if (m_display_up->text() == "0") {
+        m_display_up->setText(trigono + "(");
+    } else if (isdigit(*last_elem.toStdString().data()) == 0 &&
+               (last_elem == "+" ||last_elem == "-" ||last_elem == "/" || last_elem == "*" || last_elem == "(")) {
+        m_display_up->setText(m_display_up->text() + trigono + "(");
+    }
+    qDebug() << "In trigonometry" << trigono;
 
 }
 
-void Calculator::addFunctionsClicked() {
+void Calculator::AddFunctionsClicked() {
 
 }
 
-void Calculator::clear() {
-
+void Calculator::Clear() {
+    QString text = m_display_up->text();
+    text.chop(1);
+    if (text.isEmpty()) {
+        text = "0";
+    }
+    m_display_up->setText(text);
 }
 
-void Calculator::clearAll() {
+void Calculator::ClearAll() {
+    m_display_up->setText("0");
+}
+
+void Calculator::AbortOperation() {
 
 }

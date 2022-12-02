@@ -6,7 +6,17 @@
 #include <QLabel>
 #include <QColor>
 #include <QImage>
-#include <mybutton.h>
+
+#include <QGridLayout>
+#include <QPushButton>
+#include <QTextLine>
+#include <QChar>
+
+#include <QValidator>
+#include <QDebug>
+
+#include "mybutton.h"
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -20,26 +30,31 @@ public:
     Calculator();
 
 private slots:
-    void digitClicked();
-    void unaryOperatorClicked();
-    void doubleOperatorClicked();
-    void equalClicked();
-    void pointClicked();
-    void changeSingClicked();
-    void trigonometryClicked();
-    void addFunctionsClicked();
-    void clear();
-    void clearAll();
+    void DigitClicked();
+    void UnaryOperatorClicked();
+    void DoubleOperatorClicked();
+    void EqualClicked();
+    int PointClicked();
+    void ChangeSingClicked();
+    void TrigonometryClicked();
+    void AddFunctionsClicked();
+    void Clear();
+    void ClearAll();
+    void AuxiliaryOperatorClicked();
+    void AbortOperation();
+    void CheckPoint();
+
+
 
 private:
-    MyButton* createButton(const QString& text, const char* member);
-    double m_sum_in_memory;
-
-    QString m_pending_operation;
+    MyButton* CreateButton(const QString& text, const char* member);
+    QVector<MyButton*> buttons;
 
     QLineEdit* m_display_up;
     QLineEdit* m_display_x;
     QLabel* m_x;
+
+    int count = 0;
 
     MyButton* m_digitButtons[10];
 

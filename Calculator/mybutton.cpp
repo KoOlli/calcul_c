@@ -1,7 +1,7 @@
-#include <mybutton.h>
+#include "mybutton.h"
 
 MyButton::MyButton(const QString &text, QWidget *parent) :
-    QToolButton(parent) {
+    QPushButton(parent) {
         setText(text);
         setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 }
