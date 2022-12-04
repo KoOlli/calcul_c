@@ -10,16 +10,25 @@ CONFIG += c++17
 
 SOURCES += \
     calculator.cpp \
+    credit_calculator.cpp \
+    deposit_calculator.cpp \
+    form_x.cpp \
     main.cpp \
     mainwindow.cpp \
     mybutton.cpp
 
 HEADERS += \
     calculator.h \
+    credit_calculator.h \
+    deposit_calculator.h \
+    form_x.h \
     mainwindow.h \
     mybutton.h
 
 FORMS += \
+    credit_calculator.ui \
+    deposit_calculator.ui \
+    form_x.ui \
     mainwindow.ui
 
 # Default rules for deployment.

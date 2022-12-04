@@ -3,6 +3,11 @@
 
 #include <QMainWindow>
 
+#include "ui_mainwindow.h"
+#include "calculator.h"
+#include "form_x.h"
+
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE

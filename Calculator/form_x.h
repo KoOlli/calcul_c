@@ -1,11 +1,9 @@
-#ifndef CALCULATOR_H
-#define CALCULATOR_H
+#ifndef FORM_X_H
+#define FORM_X_H
 
 #include <QChar>
-#include <QColor>
 #include <QDebug>
 #include <QGridLayout>
-#include <QImage>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
@@ -13,55 +11,50 @@
 #include <QValidator>
 #include <QWidget>
 
-#include "credit_calculator.h"
-#include "deposit_calculator.h"
-#include "form_x.h"
 #include "mybutton.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
-class MainWindow;
+class Form_x;
 }
 QT_END_NAMESPACE
 
-class Calculator : public QWidget {
+class Form_x : public QWidget {
   Q_OBJECT
 
  public:
-  Calculator();
-  Form_x forrrrrm_x;
+  explicit Form_x(QWidget* parent = nullptr);
+  ~Form_x();
+  QString result_xxxxxxx = "123456";
+
+ signals:
+  void firstWindow();
 
  private slots:
   void DigitClicked();
   void UnaryOperatorClicked();
   void DoubleOperatorClicked();
   void EqualClicked();
-  int PointClicked();
-  void ChangeSingClicked();
+  void PointClicked();
+  //    void ChangeSingClicked();
   void TrigonometryClicked();
-  void CreditClicked();
-  void DepositClicked();
-  void GraphsClicked();
+  //    void AddFunctionsClicked();
   void Clear();
   void ClearAll();
   void AuxiliaryOperatorClicked();
-  void AbortOperation();
+  //    void AbortOperation();
   void CheckPoint();
-  void XClicked();
 
  private:
-  Form_x* new_widget_for_x;
-  //    new_widget_for_graphs;
-  Deposit_calculator* new_widget_for_deposit;
-  Credit_calculator* new_widget_for_credit;
   MyButton* CreateButton(const QString& text, const char* member);
   QVector<MyButton*> buttons;
 
-  QLineEdit* m_display_up;
+  QLineEdit* display_for_x;
 
   int count = 0;
 
   MyButton* m_digitButtons[10];
+  //    Ui::Form_x *ui;
 };
 
-#endif  // CALCULATOR_H
+#endif  // FORM_X_H
