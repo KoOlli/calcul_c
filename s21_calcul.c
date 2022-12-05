@@ -1,4 +1,6 @@
 #include "s21_calcul.h"
+#define PI \
+  3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679821480865132823066470938446095505822317253594081284811174502841027019385211055596446229489549303819644288109756659334461284756482337867831652712019091
 
 Stack *create_stack() {
   Stack *s = malloc(sizeof(Stack));
@@ -56,18 +58,21 @@ int is_empty(Stack *s) {
 void main() {
   // int priority;
   // double value;
-  char *string = "2+2*3+1";
+  char *string = "cos(sin(P/2))-3*sin(2-2)+4";
   // char *string_for_chityvatel = calloc(strlen(string), sizeof(char));
   // char *string_for_unar = calloc(strlen(string), sizeof(char));
   // printf("string = %s\n", string);
   // Data elem;
-  // elem.number = 0;
-
+  // elem.number = -3;
+  // Stack *my_stack_for_number;
   // push_elem(my_stack_for_number, elem);
   // push_elem(my_stack_for_symbol, elem);
-  // printf("%c", my_stack_for_number->top->data.number);
+  // double result;
+  // result = 2-2*3+1;
+  // printf("%lf", result);
 
   reduction_of_variables(string);
+
   // check_unar_symbol(string_for_chityvatel, string_for_unar);
   // chityvatel_stroki(my_stack_for_number, my_stack_for_symbol,
   // string_for_unar, string_for_chityvatel);
@@ -151,13 +156,10 @@ void check_unar_symbol(char *string) {
 
 int chityvatel_stroki(char *string) {
   char *string_final = calloc(strlen(string) + 1, sizeof(char));
-
+  int temp_priority = 0;
   Stack *my_stack_for_number = create_stack();
   Stack *my_stack_for_symbol = create_stack();
-
   Data elem;
-  int temp_priority = 0;
-
   double template;
   char *t = calloc(strlen(string), sizeof(char));
   for (int i = 0, j = 0; string[i] != '\0'; i++) {
@@ -169,55 +171,95 @@ int chityvatel_stroki(char *string) {
       if_isdigit_end = 1;
     }
     string_final = t;
-
     double template = strtod(t, &string_final);
-
     elem.number = template;
     if (if_isdigit_end == 1) {
       push_elem(my_stack_for_number, elem);
     }
+
     for (size_t ii = 0; ii < strlen(string) + 1; ++ii) t[ii] = '\0';
     j = 0;
     if ((isdigit(string[i]) == 0 || string[i] != '.') && string[i] != '\0') {
+      if (string[i] == 'P') {
+        elem.number = PI;
+        push_elem(my_stack_for_number, elem);
+        continue;
+      }
       elem.symbol = string[i];
-      // push_elem(my_stack_for_symbol, elem);
-      printf("\nqwerty %c\n", string[i]);
-
-      if (my_stack_for_symbol->top == NULL) {
-        
+      if (string[i] == '(') {
         push_elem(my_stack_for_symbol, elem);
-        printf("NOOOOOOOO%c\n", my_stack_for_symbol->top->data.symbol);
         temp_priority = check_priority(elem.symbol);
-      } else {
-        if (check_priority(elem.symbol) < temp_priority) {
-
-          printf("GOOOOOOOOOD JOB, BOOOY %d - %d\n", check_priority(elem.symbol), temp_priority);
-          // math(my_stack_for_number, my_stack_for_symbol);
-          
-          temp_priority = check_priority(elem.symbol);
-        } else if (check_priority(elem.symbol) >= temp_priority) {
-          printf("\nend\n");
-
-          push_elem(my_stack_for_symbol, elem);
-          temp_priority = check_priority(elem.symbol);
+      } else if (string[i] == ')') {
+        while (my_stack_for_symbol->top->data.symbol != '(') {
+          math(my_stack_for_number, my_stack_for_symbol, &temp_priority);
+          if (my_stack_for_symbol->top != NULL) {
+            temp_priority =
+                check_priority(my_stack_for_symbol->top->data.symbol);
+          }
         }
+        if (my_stack_for_symbol->top->data.symbol == '(') {
+          pop_elem(my_stack_for_symbol);
+          if (my_stack_for_symbol->top != NULL) {
+            temp_priority =
+                check_priority(my_stack_for_symbol->top->data.symbol);
+          }
+        }
+        elem.symbol = my_stack_for_symbol->top->data.symbol;
+      } else if (check_priority(elem.symbol) == 3) {
+        push_elem(my_stack_for_symbol, elem);
+        temp_priority = check_priority(my_stack_for_symbol->top->data.symbol);
+      } else {
+        stack_push(my_stack_for_number, my_stack_for_symbol, elem,
+                   &temp_priority);
       }
     }
+    // while (my_stack_for_symbol->top != NULL) {
+    //   math(my_stack_for_number, my_stack_for_symbol, &temp_priority);
+    // }
   }
-        printf(" .  %c\n", my_stack_for_symbol->top->next->next->data.symbol);
-  // while (my_stack_for_symbol->top != NULL) {
-  //   printf("%lf\n", my_stack_for_number->top->data.number);
-  //   math(my_stack_for_number, my_stack_for_symbol);
-  // }
-  // printf("\n number = %lf\n",
-  //  my_stack_for_number->top->next->next->next->data.number);
-
-  // printf("\n symbol = %c\n", my_stack_for_symbol->top->data.symbol);
-  // free(t);
-  // free(string);
-
-  // printf("%c\n", my_stack_for_symbol->top->);
+  while (my_stack_for_symbol->top != NULL) {
+    math(my_stack_for_number, my_stack_for_symbol, &temp_priority);
+    // temp_priority = check_priority(my_stack_for_symbol->top->data.symbol);
+  }
+  printf("\n number = %lf\n", my_stack_for_number->top->data.number);
   return 0;
+}
+
+void stack_push(Stack *my_stack_for_number, Stack *my_stack_for_symbol,
+                Data elem, int *temp_priority) {
+  int template;
+  if (my_stack_for_symbol->top == NULL) {
+    push_elem(my_stack_for_symbol, elem);
+    *temp_priority = check_priority(my_stack_for_symbol->top->data.symbol);
+  } else {
+    // printf("запушено наверху %c\n", my_stack_for_symbol->top->data.symbol);
+    // printf("запушено после него %c\n",
+    //        my_stack_for_symbol->top->next->data.symbol);
+    // printf("в руках %c\n", elem.symbol);
+
+    if (check_priority(elem.symbol) <= *temp_priority) {
+      template = *temp_priority;
+      // printf("запушено наверху %c\n", my_stack_for_symbol->top->data.symbol);
+      // printf("запушено после него %c\n",
+      //        my_stack_for_symbol->top->next->data.symbol);
+      // printf("в руках %c\n", elem.symbol);
+
+      while (
+          (my_stack_for_symbol->top != NULL) &&
+          (check_priority(my_stack_for_symbol->top->data.symbol) <= template)) {
+        math(my_stack_for_number, my_stack_for_symbol, &template);
+        // if (my_stack_for_symbol->top != NULL) {
+        //   *temp_priority =
+        //       check_priority(my_stack_for_symbol->top->data.symbol);
+        // }
+      }
+      push_elem(my_stack_for_symbol, elem);
+      *temp_priority = check_priority(my_stack_for_symbol->top->data.symbol);
+    } else {
+      push_elem(my_stack_for_symbol, elem);
+      *temp_priority = check_priority(my_stack_for_symbol->top->data.symbol);
+    }
+  }
 }
 
 // проверяем на приоритетность
@@ -261,35 +303,54 @@ int check_priority(char symb) {
   return priority;
 }
 
-void math(Stack *my_stack_for_number, Stack *my_stack_for_symbol) {
+void math(Stack *my_stack_for_number, Stack *my_stack_for_symbol,
+          int *temp_priority) {
   double a, b, c;
   char t;
   Data elem;
   t = pop_elem(my_stack_for_symbol).symbol;
   printf("%c\n", t);
+  printf("prioritet in math %d\n", check_priority(t));
 
   if (check_priority(t) == 6) {
     a = pop_elem(my_stack_for_number).number;
     c = priority_6(a);
+    printf("number_1 %lf\n", a);
+
   } else if (check_priority(t) == 5) {
     a = pop_elem(my_stack_for_number).number;
     b = pop_elem(my_stack_for_number).number;
     c = priority_5(a, b);
+    printf("number_1 %lf\n", a);
+    printf("number_2 %lf\n", b);
   } else if (check_priority(t) == 4) {
     a = pop_elem(my_stack_for_number).number;
     b = pop_elem(my_stack_for_number).number;
     c = priority_4(t, a, b);
+    printf("number_1 %lf\n", a);
+    printf("number_2 %lf\n", b);
+
   } else if (check_priority(t) == 3) {
     a = pop_elem(my_stack_for_number).number;
     c = priority_3(t, a);
+    printf("number_1 %lf\n", a);
   } else if (check_priority(t) == 2) {
     a = pop_elem(my_stack_for_number).number;
     b = pop_elem(my_stack_for_number).number;
     c = priority_2(t, a, b);
+    printf("number_1 %lf\n", a);
+    printf("number_2 %lf\n", b);
   }
-  // printf("%lf", my_stack_for_number->top->data.symbol);
   elem.number = c;
+  printf("maaaathhh %lf\n\n", c);
   push_elem(my_stack_for_number, elem);
+  // printf(" крокозябра\n");
+  if (my_stack_for_symbol->top != NULL) {
+    *temp_priority = check_priority(my_stack_for_symbol->top->data.symbol);
+  }
+  // printf(" %lf\n", my_stack_for_number->top->data.number);
+  // printf("prioritet in END math %lf\n\n",
+  //  my_stack_for_number->top->data.number);
 }
 
 double priority_6(double number) { return 0 - number; }

@@ -29,12 +29,14 @@ void reduction_of_variables(char *string);
 void check_unar_symbol(char *string);
 int chityvatel_stroki(char *string);
 int check_priority(char symb);
-void math(Stack *my_stack_for_number, Stack *my_stack_for_symbol);
+void math(Stack *my_stack_for_number, Stack *my_stack_for_symbol, int *temp_priority);
 double priority_6(double number);
 double priority_5(double number_1, double number_2);
 double priority_4(char symbol, double number_1, double number_2);
 double priority_3(char symbol, double number_1);
 double priority_2(char symbol, double number_1, double number_2);
+void stack_push(Stack *my_stack_for_number, Stack *my_stack_for_symbol,
+                Data elem, int *temp_priority);
 
 
 // void check_unar_symbol(char *string, char *string_final);
