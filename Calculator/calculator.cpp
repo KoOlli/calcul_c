@@ -32,7 +32,7 @@ Calculator::Calculator() {
   for (int i = 0; i < 10; ++i) {
     m_digitButtons[i] = CreateButton(QString::number(i), SLOT(DigitClicked()));
   }
-  MyButton* var_x = CreateButton("x", SLOT(XClicked()));
+  MyButton* var_x = CreateButton("x", SLOT(CheckClickedX()));
 
   MyButton* var_point = CreateButton(".", SLOT(CheckPoint()));
 
@@ -71,8 +71,6 @@ Calculator::Calculator() {
   mainLayout->addWidget(m_display_up, 0, 0, 2, 9);
 
   mainLayout->addWidget(var_x, 4, 0, 1, 3);
-  //    mainLayout->addWidget(m_x,               4, 0);
-  //    mainLayout->addWidget(m_display_x,       4, 1, 1, 2);
   mainLayout->addWidget(var_open_bracket, 4, 4);
   mainLayout->addWidget(var_close_bracket, 4, 5);
   mainLayout->addWidget(var_cencel_symbol, 4, 6);
@@ -124,34 +122,31 @@ Calculator::Calculator() {
       "#FFCBD3 }"
       "Calculator { background-color: #FFDAD3 }");
 
-  //    m_display_x->setFixedSize(150, 30);
-
   QFont font = m_display_up->font();
   font.setPointSize(font.pointSize() + 30);
   m_display_up->setFont(font);
-  //    QFont siz = m_display_x->font();
-  //    siz.setPointSize(siz.pointSize() + 7);
-  //    m_display_x->setFont(siz);
-  //    m_x->setFont(siz);
 
   setLayout(mainLayout);
 
   setWindowTitle("Calculator");
 }
 
-void Calculator::XClicked() {
-  new_widget_for_x->show();
-  //  Form_x* new_widget_for_x();
+void Calculator::CheckClickedX() {
   MyButton* temp = (MyButton*)sender();
-  QString x = temp->text();
-  //  QWidget window_for_x;
+  QString x_clicked = temp->text();
   QString last_elem = m_display_up->text().last(1);
+
   if (m_display_up->text() == "0") {
-    m_display_up->setText(x);
+    new_widget_for_x->show();
+    m_display_up->setText(x_clicked);
   } else if (last_elem == "(" || last_elem == "/" || last_elem == "*" ||
              last_elem == "+" || last_elem == "-" || last_elem == "^" ||
              last_elem == "%") {
-    m_display_up->setText(m_display_up->text() + x);
+    if (new_widget_for_x->xxxx.isEmpty()) {
+      new_widget_for_x->show();
+    } else if (!new_widget_for_x->xxxx.isEmpty()) {
+      m_display_up->setText(m_display_up->text() + x_clicked);
+    }
   }
 }
 
@@ -221,10 +216,6 @@ void Calculator::UnaryOperatorClicked() {
   qDebug() << "In unary" << unary;
 }
 
-// void QWidget::setDisabled ( bool disable ) {
-
-//}
-
 void Calculator::AuxiliaryOperatorClicked() {
   MyButton* temp = (MyButton*)sender();
   QString auxiliary = temp->text();
@@ -268,7 +259,69 @@ void Calculator::DoubleOperatorClicked() {
   }
 }
 
-void Calculator::EqualClicked() {}
+void Calculator::EqualClicked() {
+  char* equal;
+  QString templ = m_display_up->text().toLatin1();
+  QString resultat;
+  for (int i = 0, j = 0; i < templ.size(); ++i, ++j) {
+    if (templ[i] == '?') {
+      resultat[j] = 'P';
+    } else if (templ[i] == 'x') {
+      int k = 0;
+      while (j < new_widget_for_x->xxxx.size()) {
+        resultat[j] = new_widget_for_x->xxxx[k];
+        j++;
+        k++;
+      }
+      //        string_final[j]
+    }
+  }
+
+  QByteArray result = templ.toLatin1();
+  equal = result.data();
+  reduction_of_variables(equal);
+  m_display_up->setText(QString::number(reduction_of_variables(equal)));
+
+  //  if (new_widget_for_x->xxxx.isEmpty()) {
+  //    QString templ = m_display_up->text().toLatin1();
+  //    for (int i = 0; i < templ.size(); ++i) {
+  //      if (templ[i] == '?') {
+  //        templ[i] = 'P';
+  //      }
+  //    }
+  //    QByteArray result = templ.toLatin1();
+  //    equal = result.data();
+  //    //    qDebug() << "In equal" << equal;
+  //    reduction_of_variables(equal);
+  //    m_display_up->setText(QString::number(reduction_of_variables(equal)));
+  //  } else {
+  //    QString templ = m_display_up->text().toLatin1();
+  //    int j = 0;
+  //    qDebug() << "templ" << templ;
+  //    for (int i = 0; i < templ.size(); ++i) {
+  //      if (templ[i] == '?') {
+  //        templete[j] = 'P';
+  //        j++;
+  //      } else {
+  //        templete[j] = templ[i];
+  //        j++;
+  //      }
+  //    }
+  //    qDebug() << "templete" << templete;
+
+  //    QByteArray result = templete.toLatin1();
+  //    qDebug() << "result" << result;
+
+  //    //    new_widget_for_x->xxxx = "";
+  //    equal = result.data();
+  //    qDebug() << "equal" << equal;
+
+  //    reduction_of_variables(equal);
+  //    qDebug() << "reduction_of_variables(equal)"
+  //             << reduction_of_variables(equal);
+  //    m_display_up->setText(QString::number(reduction_of_variables(equal)));
+  //  }
+}
 
 void Calculator::CheckPoint() {
   MyButton* temp = (MyButton*)sender();
@@ -280,7 +333,7 @@ void Calculator::CheckPoint() {
       PointClicked();
     }
   }
-  qDebug() << "In point" << point;
+  qDebug() << "In check point" << point;
 }
 
 int Calculator::PointClicked() {

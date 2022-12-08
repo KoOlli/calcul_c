@@ -1,6 +1,5 @@
 #ifndef FORM_X_H
 #define FORM_X_H
-
 #include <QChar>
 #include <QDebug>
 #include <QGridLayout>
@@ -25,7 +24,7 @@ class Form_x : public QWidget {
  public:
   explicit Form_x(QWidget* parent = nullptr);
   ~Form_x();
-  QString result_xxxxxxx = "123456";
+  QString xxxx;
 
  signals:
   void firstWindow();

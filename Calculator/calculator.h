@@ -1,6 +1,16 @@
 #ifndef CALCULATOR_H
 #define CALCULATOR_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include "s21_calcul.h"
+
+#ifdef __cplusplus
+}
+#endif
+
 #include <QChar>
 #include <QColor>
 #include <QDebug>
@@ -29,7 +39,7 @@ class Calculator : public QWidget {
 
  public:
   Calculator();
-  Form_x forrrrrm_x;
+  //  Form_x forrrrrm_x;
 
  private slots:
   void DigitClicked();
@@ -47,7 +57,7 @@ class Calculator : public QWidget {
   void AuxiliaryOperatorClicked();
   void AbortOperation();
   void CheckPoint();
-  void XClicked();
+  void CheckClickedX();
 
  private:
   Form_x* new_widget_for_x;

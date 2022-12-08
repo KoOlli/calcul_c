@@ -1,11 +1,9 @@
 #include "form_x.h"
 
+#include "calculator.h"
 #include "ui_form_x.h"
 
-Form_x::Form_x(QWidget* parent)
-    : QWidget(parent)
-//    ui(new Ui::Form_x)
-{
+Form_x::Form_x(QWidget* parent) : QWidget(parent) {
   display_for_x = new QLineEdit();
   QGridLayout* mainLayout = new QGridLayout;
 
@@ -97,21 +95,10 @@ Form_x::Form_x(QWidget* parent)
       "QLineEdit { font-family: Chalkduster; color: #AAABFA; background-color: "
       "#E1D7FA }"
       "Form_x { background-color: #F1E3FA }");
-  //    MyButton { background-color: #FAB0CD; font-family: Chalkduster;
-  //    font-size: 15px; color: #FA69CD; border-style: outset; border-width:
-  //    1px;"
-  //                      "border-radius: 10px; border-color: beige; min-width:
-  //                      2em; padding: 1px; }"
-
-  //    m_display_x->setFixedSize(150, 30);
 
   QFont font = display_for_x->font();
   font.setPointSize(font.pointSize() + 30);
   display_for_x->setFont(font);
-  //    QFont siz = m_display_x->font();
-  //    siz.setPointSize(siz.pointSize() + 7);
-  //    m_display_x->setFont(siz);
-  //    m_x->setFont(siz);
 
   setLayout(mainLayout);
 
@@ -144,6 +131,7 @@ void Form_x::DigitClicked() {
 
   qDebug() << "digit pressed" << digit;
 }
+
 void Form_x::UnaryOperatorClicked() {
   MyButton* temp = (MyButton*)sender();
   QString unary = temp->text();
@@ -176,6 +164,7 @@ void Form_x::UnaryOperatorClicked() {
 
   qDebug() << "In unary" << unary;
 }
+
 void Form_x::DoubleOperatorClicked() {
   count = 0;
   MyButton* temp = (MyButton*)sender();
@@ -192,9 +181,28 @@ void Form_x::DoubleOperatorClicked() {
     }
   }
 }
+
 void Form_x::EqualClicked() {
-  //
-  //  result_xxxxxxx = "123456";
+  char* equal;
+  QString templ = display_for_x->text().toLatin1();
+
+  for (int i = 0; i < templ.size(); ++i) {
+    if (templ[i] == '?') {
+      templ[i] = 'P';
+    }
+  }
+
+  QByteArray result = templ.toLatin1();
+  equal = result.data();
+  qDebug() << "In equal x" << equal;
+
+  reduction_of_variables(equal);
+
+  display_for_x->setText(QString::number(reduction_of_variables(equal)));
+  xxxx = display_for_x->text();
+  qDebug() << "xxxx" << xxxx;
+
+  this->close();
   emit firstWindow();
 }
 
@@ -208,7 +216,7 @@ void Form_x::CheckPoint() {
       PointClicked();
     }
   }
-  qDebug() << "In check point" << point;
+  qDebug() << "In check point x" << point;
 }
 
 void Form_x::PointClicked() {
@@ -220,10 +228,6 @@ void Form_x::PointClicked() {
 
   qDebug() << "In point" << point;
 }
-
-// void ChangeSingClicked() {
-
-//}
 
 void Form_x::TrigonometryClicked() {
   MyButton* temp = (MyButton*)sender();
@@ -239,9 +243,7 @@ void Form_x::TrigonometryClicked() {
   }
   qDebug() << "In trigonometry" << trigono;
 }
-// void AddFunctionsClicked() {
 
-//}
 void Form_x::Clear() {
   QString text = display_for_x->text();
   text.chop(1);
@@ -250,6 +252,7 @@ void Form_x::Clear() {
   }
   display_for_x->setText(text);
 }
+
 void Form_x::ClearAll() { display_for_x->setText("0"); }
 
 void Form_x::AuxiliaryOperatorClicked() {
@@ -277,23 +280,5 @@ void Form_x::AuxiliaryOperatorClicked() {
 
   qDebug() << "In auxiliary" << auxiliary;
 }
-// void AbortOperation() {
 
-//}
-
-Form_x::~Form_x() {
-  //    delete ui;
-}
-
-//    MyButton*  temp = (MyButton*) sender();
-//    QString x = temp->text();
-//    QWidget window_for_x;
-//    QString last_elem = new_widget_for_x->text().last(1);
-//    if (new_widget_for_x->text() == "0") {
-//        new_widget_for_x->setText(x);
-//    } else if (last_elem == "(" || last_elem == "/" || last_elem == "*" ||
-//    last_elem == "+" || last_elem == "-" || last_elem == "^" || last_elem ==
-//    "%") {
-//        new_widget_for_x->setText(new_widget_for_x->text() + x);
-//    }
-//    ui->setupUi(this);
+Form_x::~Form_x() {}

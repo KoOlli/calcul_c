@@ -15,7 +15,8 @@ SOURCES += \
     form_x.cpp \
     main.cpp \
     mainwindow.cpp \
-    mybutton.cpp
+    mybutton.cpp \
+    s21_calcul.c
 
 HEADERS += \
     calculator.h \
@@ -23,7 +24,8 @@ HEADERS += \
     deposit_calculator.h \
     form_x.h \
     mainwindow.h \
-    mybutton.h
+    mybutton.h \
+    s21_calcul.h
 
 FORMS += \
     credit_calculator.ui \
