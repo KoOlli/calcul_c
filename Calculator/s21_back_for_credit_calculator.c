@@ -1,125 +1,97 @@
 #include "s21_back_for_credit_calculator.h"
 
-//int main() {
-//  double sum_credit = 300000.0;
-//  int number_of_payment = 18;
-//  double percent = 15.0;
-//  int month = 06;
-//  int year = 2022;
-//  // платежей совершенно
-//  int term = 1;
-//  loan_annuitet_calculation(sum_credit, number_of_payment, percent);
-//  check_year(year);
-//  check_days_on_month(month, year);
-//  sum_percent(percent, year, sum_credit, term, month, number_of_payment);
-//  balance_of_debt(sum_credit, term, number_of_payment, percent);
-//  sum_body(year, term, sum_credit, number_of_payment, percent, month);
-//  total_loan_payment(number_of_payment, sum_credit, percent);
-//}
-
-//double loan_different_calculation(double sum_credit, double percent, int year, int term, int month, int number_of_payment) {
-//  double part_of_the_principal = sum_credit / number_of_payment;
-//  return part_of_the_principal + sum_percent(percent, year, sum_credit, term, month, number_of_payment);
-//}
-// сумма платежа в месяц
+// сумма платежа в месяц аннуитетный калькуль
 double loan_annuitet_calculation(double sum_credit, int number_of_payment,
-                                 double percent) {
-  double monthy_interest_ratio = percent / 1200;
-  printf("%lf\n", monthy_interest_ratio);
-
+                                 double percent, int i) {
+  double resultat = 0.0;
+  double monthy_interest_ratio = percent / 12 / 100;
   double annuitet_ratio =
-      (monthy_interest_ratio *
-       pow((1 + monthy_interest_ratio), number_of_payment)) /
-      (pow((1 + monthy_interest_ratio), number_of_payment) - 1);
+      (monthy_interest_ratio * pow((1 + monthy_interest_ratio), number_of_payment)) / (pow((1 + monthy_interest_ratio), number_of_payment) - 1);
+  double sum_payment = annuitet_ratio * sum_credit;
+  double total_loan_amount = sum_payment * number_of_payment;
 
-
-  return sum_credit * annuitet_ratio;
+  if (i == (number_of_payment - 1)) {
+      resultat = total_loan_amount - (sum_payment * i);
+    } else {
+      resultat = sum_payment;
+    }
+  return resultat;
 }
 
-//// чекаем високосный год или нет
-//int check_year(int year) {
-//  // int year = 2022;
-//  int days;
-//  if ((year % 4) == 0) {
-//    days = 366;
-//  } else {
-//    days = 365;
-//  }
-//  return days;
-//}
+double sum_body(double sum_credit, int number_of_payment,
+                double percent, int i, double *result, int year) {
+  double result_for_body;
+  result_for_body = loan_annuitet_calculation(sum_credit, number_of_payment,
+                                           percent, i) - sum_percent(result, percent, i, year);
+  return result_for_body;
+}
 
-//// чекаем количество дней в месяце
-//int check_days_on_month(int month, int year) {
-//  int days;
-//  switch (month) {
-//    case '01':
-//    case '03':
-//    case '05':
-//    case '07':
-//    case '08':
-//    case '10':
-//    case '12':
-//      days = 31;
-//      break;
-//    case '04':
-//    case '06':
-//    case '09':
-//    case '11':
-//      days = 30;
-//    case '02':
-//      if (check_year(year) == 0) {
-//        days = 28;
-//      } else {
-//        days = 29;
-//      }
-//  }
-//  return days;
-//}
+double sum_percent(double *result, double percent, int i, int year) {
+  double sum_for_percent_return = *result * percent / 100 * check_days_on_month(i, year) / check_year(year);
+  return sum_for_percent_return;
+}
 
-//// сумма погашения в проценты
-//double sum_percent(double percent, int year, double sum_credit, int term,
-//                   int month, int number_of_payment) {
-//  // double month_pay = loan_calculation(sum_credit, number_of_payment,
-//  // percent);
-//  int days = check_days_on_month(month, year);
-//  int days_in_year = check_year(year);
-//  double balance_debt =
-//      balance_of_debt(sum_credit, term, number_of_payment, percent);
-//  return balance_debt * percent * days / days_in_year / 100;
-//}
+double balance_of_debt(double sum_credit, int number_of_payment,
+                       double percent, int i, double *result) {
+  if (i == 0) {
+      *result = overpayment(sum_credit, number_of_payment,
+                   percent, i) - loan_annuitet_calculation(sum_credit, number_of_payment,
+                                                           percent, i);
+    } else if (loan_annuitet_calculation(sum_credit, number_of_payment,
+                                         percent, i) > *result) {
+      *result = *result - *result;
+    } else {
+      *result = *result - loan_annuitet_calculation(sum_credit, number_of_payment,
+                                                  percent, i);
+    }
+  return *result;
+}
 
-//// остаток задолжности
-//double balance_of_debt(double sum_credit, int term, int number_of_payment,
-//                       int percent) {
-//  double month_pay = loan_annuitet_calculation(sum_credit, number_of_payment, percent);
-//  return sum_credit - month_pay * term;
-//}
+double overpayment(double sum_credit, int number_of_payment,
+                    double percent, int i) {
+  double result = loan_annuitet_calculation(sum_credit, number_of_payment,
+                                   percent, i) * number_of_payment;
+  return result;
+}
 
-//// сумма погашения в тело
-//double sum_body(int year, int term, double sum_credit, int number_of_payment,
-//                double percent, int month) {
-//  // double month_pay = loan_calculation(sum_credit, number_of_payment,
-//  // percent);
-////  int days = check_days_on_month(month, year);
-//  double sum_in_month =
-//      loan_annuitet_calculation(sum_credit, number_of_payment, percent);
-//  double sum_perc =
-//      sum_percent(percent, year, sum_credit, term, month, number_of_payment);
-//  double sum_in_body = sum_in_month - sum_perc;
-//  return sum_in_body;
-//}
+// чекаем високосный год или нет
+int check_year(int year) {
+  // int year = 2022;
+  int days;
+  if ((year % 4) == 0) {
+    days = 366;
+  } else {
+    days = 365;
+  }
+  return days;
+}
 
-//double total_loan_payment(int number_of_payment, double sum_credit,
-//                          int percent) {
-//  double month_pay = loan_annuitet_calculation(sum_credit, number_of_payment, percent);
-//  return number_of_payment * month_pay;
-//}
-
-//double overpayment_on_a_loan(double sum_credit, int number_of_payment,
-//                             int percent) {
-//  // double month_pay = loan_calculation(sum_credit, number_of_payment,
-//  // percent);
-//  double result =
-//      total_loan_payment(number_of_payment, sum_credit, percent) - sum_credit;
-//  return result;
-//}
+// чекаем количество дней в месяце
+int check_days_on_month(int i, int year) {
+  int days;
+  int templ;
+  if (i > 12) {
+      templ = i % 12;
+    } else {
+      templ = i;
+    }
+  switch (templ) {
+    case 4:
+    case 6:
+    case 9:
+    case 11:
+      days = 30;
+      break;
+    case 2:
+      if (check_year(year) == 0) {
+        days = 28;
+      } else {
+        days = 29;
+      }
+      break;
+    default:
+      days = 31;
+      break;
+  }
+  return days;
+}

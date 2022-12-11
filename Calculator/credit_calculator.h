@@ -18,7 +18,6 @@ extern "C" {
 #endif
 
 #include "s21_back_for_credit_calculator.h"
-//#include "s21_back_for_credit_different_calculator.h"
 #ifdef __cplusplus
 }
 #endif

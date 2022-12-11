@@ -44,29 +44,6 @@ Credit_calculator::Credit_calculator(QWidget* parent) : QWidget(parent) {
   term_in_months = new QSpinBox;
   term_in_months->setMaximum(600);
   term_in_months->setAlignment(Qt::AlignRight);
-  //    term_in_months->setReadOnly(true);
-
-  //    in_months = new QLabel;
-  //    in_months->setText("(В месяцах)");
-
-  //  layout = new QVBoxLayout(this);
-  //  this->setLayout(layout);
-  //  menubar = new QMenuBar(this);
-  //  layout->setMenuBar(menubar);
-
-  //  menu = new QMenu("Type", this);
-  //  action1 = new QAction("smth", this);
-  //  menu->addAction(action1);
-
-  //  menubar->addMenu(menu);
-
-  //  QMenuBar* mb = new QMenuBar(this);
-  //  QMenu* menu_type_credit = new QMenu("выберите тип платежа");
-  //  menu_type_credit->addAction("аннуитетный");
-  //  menu_type_credit->addAction("дифференцированный");
-  //  mb->addMenu(menu_type_credit);
-  //  QVBoxLayout* layout = new QVBoxLayout;
-  //  layout->setMenuBar(menu_type_credit);
 
   interest_rate = new QLabel;
   interest_rate->setText("Процентная ставка");
@@ -169,7 +146,7 @@ void Credit_calculator::MakeCalculateClicked() {
   for (int i = 0; i < allButtons.size(); ++i) {
     radio_button_group->addButton(allButtons[i], i);
   }
-  qDebug() << radio_button_group->checkedId();
+  //  qDebug() << radio_button_group->checkedId();
   if (radio_button_group->checkedId() == 0) {
     AnnuitetTable();
   } else {
@@ -178,26 +155,37 @@ void Credit_calculator::MakeCalculateClicked() {
 }
 
 void Credit_calculator::AnnuitetTable() {
+  int year = 2022;
+  int month = 6;
+
   calculation_of_payments->setRowCount(term_in_months->text().toInt());
 
-  double sum_credit_for_estimation = sum_credit->text().toDouble();
-  double percent_for_estimation = percentage_rate->text().toDouble();
-  int number_of_payment_for_estimation = term_in_months->text().toInt();
-  result->setText(QString::number(loan_annuitet_calculation(
-      sum_credit_for_estimation, number_of_payment_for_estimation,
-      percent_for_estimation)));
+  QTableWidgetItem* item;
+  double* balance;
 
-  //  QStandardItemModel model(5, 2, this);
-  //  QModelIndex index;
-  //  for (int row = 0; row < term_in_months->text().toInt(); row++) {
-  //    for (int col = 0; col < 5; col++) {
-  //      index = model.index(row, col);
-  //      model.setData(index, 0);
-  //    }
-  //  }
-  //  QLabel first;
-  //  calculation_of_payments->setItem(1, 1);
-  qDebug() << "qwerty" << result->text();
+  for (int i = 0; i < term_in_months->text().toInt(); i++) {
+    item = new QTableWidgetItem(QString::number(
+        loan_annuitet_calculation(sum_credit->text().toDouble(),
+                                  term_in_months->text().toInt(),
+                                  percentage_rate->text().toDouble(), i),
+        'f', 2));
+    calculation_of_payments->setItem(i, 0, item);
+    item = new QTableWidgetItem(QString::number(
+        sum_body(sum_credit->text().toDouble(), term_in_months->text().toInt(),
+                 percentage_rate->text().toDouble(), i, &balance, year),
+        'f', 2));
+    calculation_of_payments->setItem(i, 1, item);
+    item = new QTableWidgetItem(QString::number(
+        sum_percent(&balance, percentage_rate->text().toDouble(), i, year), 'f',
+        2));
+    calculation_of_payments->setItem(i, 2, item);
+    item = new QTableWidgetItem(QString::number(
+        balance_of_debt(sum_credit->text().toDouble(),
+                        term_in_months->text().toInt(),
+                        percentage_rate->text().toDouble(), i, &balance),
+        'f', 2));
+    calculation_of_payments->setItem(i, 3, item);
+  }
 }
 
 void Credit_calculator::EstimationAnnuitet() {}
