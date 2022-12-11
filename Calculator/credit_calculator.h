@@ -44,6 +44,7 @@ class Credit_calculator : public QWidget {
  public:
   explicit Credit_calculator(QWidget* parent = nullptr);
   QLabel* result;
+
   ~Credit_calculator();
 
  private:

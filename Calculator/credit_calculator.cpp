@@ -156,12 +156,12 @@ void Credit_calculator::MakeCalculateClicked() {
 
 void Credit_calculator::AnnuitetTable() {
   int year = 2022;
-  int month = 6;
+  //  int month = 6;
 
   calculation_of_payments->setRowCount(term_in_months->text().toInt());
 
   QTableWidgetItem* item;
-  double* balance;
+  double balance = sum_credit->text().toDouble();
 
   for (int i = 0; i < term_in_months->text().toInt(); i++) {
     item = new QTableWidgetItem(QString::number(
@@ -170,19 +170,22 @@ void Credit_calculator::AnnuitetTable() {
                                   percentage_rate->text().toDouble(), i),
         'f', 2));
     calculation_of_payments->setItem(i, 0, item);
+
+    item = new QTableWidgetItem(QString::number(
+        sum_percent(&balance, percentage_rate->text().toDouble(), i, year), 'f',
+        2));
+    calculation_of_payments->setItem(i, 2, item);
+
     item = new QTableWidgetItem(QString::number(
         sum_body(sum_credit->text().toDouble(), term_in_months->text().toInt(),
                  percentage_rate->text().toDouble(), i, &balance, year),
         'f', 2));
     calculation_of_payments->setItem(i, 1, item);
-    item = new QTableWidgetItem(QString::number(
-        sum_percent(&balance, percentage_rate->text().toDouble(), i, year), 'f',
-        2));
-    calculation_of_payments->setItem(i, 2, item);
+
     item = new QTableWidgetItem(QString::number(
         balance_of_debt(sum_credit->text().toDouble(),
                         term_in_months->text().toInt(),
-                        percentage_rate->text().toDouble(), i, &balance),
+                        percentage_rate->text().toDouble(), i, &balance, year),
         'f', 2));
     calculation_of_payments->setItem(i, 3, item);
   }
@@ -190,7 +193,38 @@ void Credit_calculator::AnnuitetTable() {
 
 void Credit_calculator::EstimationAnnuitet() {}
 void Credit_calculator::EstimationDifferent() {
-  //   result->setText(QString::number(loan_different_calculation()));
+  int year = 2022;
+  calculation_of_payments->setRowCount(term_in_months->text().toInt());
+
+  QTableWidgetItem* item;
+  double balance = sum_credit->text().toDouble();
+
+  for (int i = 0; i < term_in_months->text().toInt(); i++) {
+    item = new QTableWidgetItem(
+        QString::number(part_of_the_principal(sum_credit->text().toDouble(),
+                                              term_in_months->text().toInt()),
+                        'f', 2));
+    calculation_of_payments->setItem(i, 1, item);
+
+    item = new QTableWidgetItem(QString::number(
+        loan_different_calculation(sum_credit->text().toDouble(),
+                                   term_in_months->text().toInt(), &balance,
+                                   percentage_rate->text().toDouble(), i, year),
+        'f', 2));
+    calculation_of_payments->setItem(i, 0, item);
+
+    item = new QTableWidgetItem(QString::number(
+        sum_percent(&balance, percentage_rate->text().toDouble(), i, year), 'f',
+        2));
+    calculation_of_payments->setItem(i, 2, item);
+
+    item = new QTableWidgetItem(QString::number(
+        balance_of_debt(sum_credit->text().toDouble(),
+                        term_in_months->text().toInt(),
+                        percentage_rate->text().toDouble(), i, &balance, year),
+        'f', 2));
+    calculation_of_payments->setItem(i, 3, item);
+  }
 }
 void Credit_calculator::BackToCalculatorClicked() {
   this->close();
