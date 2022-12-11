@@ -16,6 +16,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     mybutton.cpp \
+    s21_back_for_credit_calculator.c \
     s21_calcul.c
 
 HEADERS += \
@@ -25,6 +26,7 @@ HEADERS += \
     form_x.h \
     mainwindow.h \
     mybutton.h \
+    s21_back_for_credit_calculator.h \
     s21_calcul.h
 
 FORMS += \

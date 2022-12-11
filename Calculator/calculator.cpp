@@ -144,6 +144,7 @@ void Calculator::CheckClickedX() {
              last_elem == "%") {
     if (new_widget_for_x->xxxx.isEmpty()) {
       new_widget_for_x->show();
+      m_display_up->setText(m_display_up->text() + x_clicked);
     } else if (!new_widget_for_x->xxxx.isEmpty()) {
       m_display_up->setText(m_display_up->text() + x_clicked);
     }
@@ -248,10 +249,11 @@ void Calculator::DoubleOperatorClicked() {
   QString double_operation = temp->text();
   QString last_elem = m_display_up->text().last(1);
 
-  if (m_display_up->text() == "0" && double_operation == "-") {
+  if (m_display_up->text() == "0" &&
+      (double_operation == "-" || double_operation == "+")) {
     m_display_up->setText(double_operation);
-  } else if (double_operation == "-" ||
-             (double_operation == "+" && m_display_up->text() != "0")) {
+  } else if ((double_operation == "-" || double_operation == "+") &&
+             m_display_up->text() != "0") {
     if (isdigit(*last_elem.toStdString().data()) == 1 || last_elem == "π" ||
         last_elem == "(" || last_elem == ")" || last_elem == "x") {
       m_display_up->setText(m_display_up->text() + double_operation);
@@ -261,66 +263,20 @@ void Calculator::DoubleOperatorClicked() {
 
 void Calculator::EqualClicked() {
   char* equal;
-  QString templ = m_display_up->text().toLatin1();
-  QString resultat;
-  for (int i = 0, j = 0; i < templ.size(); ++i, ++j) {
-    if (templ[i] == '?') {
-      resultat[j] = 'P';
-    } else if (templ[i] == 'x') {
-      int k = 0;
-      while (j < new_widget_for_x->xxxx.size()) {
-        resultat[j] = new_widget_for_x->xxxx[k];
-        j++;
-        k++;
-      }
-      //        string_final[j]
-    }
+  QString templ = m_display_up->text();
+  templ.replace(QString("π"), QString("P"));
+  templ.replace(QString("x"), new_widget_for_x->xxxx);
+
+  qDebug() << "templ" << templ;
+
+  int count_bracket_open = m_display_up->text().count('(');
+  int count_bracked_closed = m_display_up->text().count(')');
+  if (count_bracked_closed == count_bracket_open) {
+    QByteArray result = templ.toLatin1();
+    equal = result.data();
+    reduction_of_variables(equal);
+    m_display_up->setText(QString::number(reduction_of_variables(equal)));
   }
-
-  QByteArray result = templ.toLatin1();
-  equal = result.data();
-  reduction_of_variables(equal);
-  m_display_up->setText(QString::number(reduction_of_variables(equal)));
-
-  //  if (new_widget_for_x->xxxx.isEmpty()) {
-  //    QString templ = m_display_up->text().toLatin1();
-  //    for (int i = 0; i < templ.size(); ++i) {
-  //      if (templ[i] == '?') {
-  //        templ[i] = 'P';
-  //      }
-  //    }
-  //    QByteArray result = templ.toLatin1();
-  //    equal = result.data();
-  //    //    qDebug() << "In equal" << equal;
-  //    reduction_of_variables(equal);
-  //    m_display_up->setText(QString::number(reduction_of_variables(equal)));
-  //  } else {
-  //    QString templ = m_display_up->text().toLatin1();
-  //    int j = 0;
-  //    qDebug() << "templ" << templ;
-  //    for (int i = 0; i < templ.size(); ++i) {
-  //      if (templ[i] == '?') {
-  //        templete[j] = 'P';
-  //        j++;
-  //      } else {
-  //        templete[j] = templ[i];
-  //        j++;
-  //      }
-  //    }
-  //    qDebug() << "templete" << templete;
-
-  //    QByteArray result = templete.toLatin1();
-  //    qDebug() << "result" << result;
-
-  //    //    new_widget_for_x->xxxx = "";
-  //    equal = result.data();
-  //    qDebug() << "equal" << equal;
-
-  //    reduction_of_variables(equal);
-  //    qDebug() << "reduction_of_variables(equal)"
-  //             << reduction_of_variables(equal);
-  //    m_display_up->setText(QString::number(reduction_of_variables(equal)));
-  //  }
 }
 
 void Calculator::CheckPoint() {

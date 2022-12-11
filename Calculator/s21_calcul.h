@@ -34,7 +34,7 @@ int character_check(char *string, Stack *my_stack_for_number,
                     Stack *my_stack_for_symbol, int *i, int *temp_priority);
 void math(Stack *my_stack_for_number, Stack *my_stack_for_symbol,
           int *temp_priority);
-double priority_6(double number);
+double priority_6(char symbol, double number);
 double priority_5(double number_1, double number_2);
 double priority_4(char symbol, double number_1, double number_2);
 double priority_3(char symbol, double number_1);

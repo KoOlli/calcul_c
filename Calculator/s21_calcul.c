@@ -110,7 +110,7 @@ double reduction_of_variables(char *string) {
     }
   }
   check_unar_symbol(string_final, my_stack_for_number, my_stack_for_symbol);
-  free(string_final);
+  if (string_final != NULL) free(string_final);
   resultat = my_stack_for_number->top->data.number;
   return resultat;
 }
@@ -119,12 +119,16 @@ double check_unar_symbol(char *string, Stack *my_stack_for_number, Stack *my_sta
   char *string_final = calloc(strlen(string) + 1, sizeof(char));
   if (string[0] == '-') {
     string_final[0] = '~';
+  } else if (string[0] == '+') {
+    string_final[0] = '#';
   } else {
     string_final[0] = string[0];
   }
   for (int i = 1; string[i] != '\0'; i++) {
     if (string_final[i - 1] == '(' && string[i] == '-') {
       string_final[i] = '~';
+    } else if (string_final[i - 1] == '(' && string[i] == '+') {
+      string_final[i] = '#';
     } else {
       string_final[i] = string[i];
     }
@@ -172,11 +176,6 @@ int character_check(char *string, Stack *my_stack_for_number,
       push_elem(my_stack_for_number, elem);
       return 0;
     }
-//    if (string[*i] == 'x') {
-//      elem.number = x;
-//      push_elem(my_stack_for_number, elem);
-//      return 0;
-//    }
     elem.symbol = string[*i];
     if (string[*i] == '(') {
       push_elem(my_stack_for_symbol, elem);
@@ -213,7 +212,7 @@ void stack_push(Stack *my_stack_for_number, Stack *my_stack_for_symbol,
     push_elem(my_stack_for_symbol, elem);
     *temp_priority = check_priority(my_stack_for_symbol->top->data.symbol);
   } else {
-    if (check_priority(elem.symbol) <= *temp_priority) {
+    if ((check_priority(elem.symbol) <= *temp_priority) && !(check_priority(elem.symbol) == 5 && check_priority(my_stack_for_symbol->top->data.symbol) == 5)) {
       template = *temp_priority;
       while (
           (my_stack_for_symbol->top != NULL) &&
@@ -261,6 +260,7 @@ int check_priority(char symb) {
       priority = 5;
       break;
     case '~':
+    case '#':
       priority = 6;
       break;
     default:
@@ -278,7 +278,7 @@ void math(Stack *my_stack_for_number, Stack *my_stack_for_symbol,
 
   if (check_priority(t) == 6) {
     a = pop_elem(my_stack_for_number).number;
-    c = priority_6(a);
+    c = priority_6(t, a);
 
   } else if (check_priority(t) == 5) {
     a = pop_elem(my_stack_for_number).number;
@@ -304,7 +304,15 @@ void math(Stack *my_stack_for_number, Stack *my_stack_for_symbol,
   }
 }
 
-double priority_6(double number) { return 0 - number; }
+double priority_6(char symbol, double number) {
+  double result = 0.0;
+  if (symbol == '~') {
+    result = 0 - number;
+  } else {
+    result = number;
+  }
+  return result;
+}
 
 double priority_5(double number_1, double number_2) {
   double result = pow(number_2, number_1);
